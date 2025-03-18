@@ -1,0 +1,5 @@
+minimalmodbus==2.1.1
+psycopg2==2.9.9
+PyQt5==5.15.10
+PyQt5_sip==12.13.0
+pyserial==3.5

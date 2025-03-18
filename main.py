@@ -1,45 +1,55 @@
-import sys
-from PySide6.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QTextEdit
-
-
-class SimpleApp(QWidget):
-    def __init__(self):
-        super()
-
-        # Nastavení GUI
-        self.setWindowTitle("SonarQube Test Aplikace")
-        self.setGeometry(100, 100, 400, 300)
-
-        # Vytvoření UI prvků
-        self.layout = QVBoxLayout()
-
-        self.text_edit = QTextEdit(self)
-        self.layout.addWidget(self.text_edit)
-
-        self.button = QPushButton("Zobrazit Text", self)
-        self.button.clicked.connect(self.display_text)
-        self.layout.addWidget(self.button)
-
-        # Nastavení layoutu
-        self.setLayout(self.layout)
-
-    def display_text(self):
-        # Funkce pro zobrazení textu z textového pole
-        text = self.text_edit.toPlainText()
-        print(f"Zadaný text: {text}")
-        self.text_edit.setText(f"Zadal(a) jsi: {text}")
-
-class A:
-    pass
-class B:
-
-class C:
-    
+from error_container import ErrorContainer
+from settings_connector import SettingsConnector
+from ftp_client import FtpClient
+from gui.error_windowui import ErrorWindowUi
+from gui.main_window_ui import MainWindowUi
+from database_connector import DatabaseConnector
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = SimpleApp()
-    window.show()
-    sys.exit(app.exec())
+    err_container = ErrorContainer()
+    sett_connector = SettingsConnector()
+    if (sett_connector.read_settings_file()):
+        ftp_c = FtpClient()
+        db_c = DatabaseConnector()
+        is_ftp_connected = ftp_c.test_ftp_connection()
+        is_db_connected = db_c.test_database_connection()
+        if (is_ftp_connected and is_db_connected):
+            if (ftp_c.download_device_photo() and ftp_c.download_schemes() and ftp_c.download_schemes_description()):
+                MainWindowUi.run_application()
+        if (is_ftp_connected and not is_db_connected):
+            ErrorWindowUi.run_application("ftp","Nepovedlo se připojit k databázi")
+        if (not is_ftp_connected and is_db_connected):
+            ErrorWindowUi.run_application("db","Nepovedlo se připojit k FTP serveru")
+        if (not is_ftp_connected and not is_db_connected):
+            ErrorWindowUi.run_application(None,"Nepovedlo se připojit k databázi a FTP serveru")
+    else:
+        ErrorWindowUi.run_application(None,"Nebyl nalezen konfigurační soubor")
+    print(err_container.get_errors())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
