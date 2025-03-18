@@ -4,7 +4,7 @@ from PySide6.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, Q
 
 class SimpleApp(QWidget):
     def __init__(self):
-        super().__init__()
+        super()
 
         # Nastavení GUI
         self.setWindowTitle("SonarQube Test Aplikace")
@@ -29,9 +29,17 @@ class SimpleApp(QWidget):
         print(f"Zadaný text: {text}")
         self.text_edit.setText(f"Zadal(a) jsi: {text}")
 
+class A:
+    pass
+class B:
+
+class C:
+    
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = SimpleApp()
     window.show()
     sys.exit(app.exec())
+
+
